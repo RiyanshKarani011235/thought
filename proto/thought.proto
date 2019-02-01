@@ -1,9 +1,70 @@
 syntax "proto3";
 
-package proto.thought;
+package proto;
 option java_package "com.thought.proto";
 option java_outer_classname = "ThoughtProto";
 
+/**
+ * A thought, which may represent anything that you could
+ * possibly think about. In that sense, maybe (with a very
+ * strong emphasis on that maybe), that's all there is.
+ */
 message Thought {
+	string id = 1;
+	Content content = 2;
+	repeated Thought subthoughts = 3;
+	repeated Label labels = 4;
+}
 
+/**
+ * A reference from a Thought/Reference to a Thought/Reference,
+ * with no condition on the referee and the referent to be
+ * different. i.e. The referee and the referent can be the same.
+ * This allows self-referential thoughts/references. Trying to
+ * walk in the footsteps of Douglas R. Hofstadter, perhaps :p
+ *
+ * A reference is different from a sub-thought in a sense that
+ * there is no parent-child relationship between the referee and
+ * the referent.
+ * 
+ * @todo Why does a Reference have to be made explicit?
+ * Can it not just be another thought? Maybe the need to have a
+ * Reference can be eliminated by having additional structure to
+ * Thought 
+ */
+message Reference {
+	string id = 1;
+	Content content = 2;
+
+	/* From */
+	oneof referee {
+		Thought thought = 3;
+		Reference reference = 5;
+	}
+
+	/* To */
+	oneof referent {
+		Thought thought = 4;
+		Reference reference = 6;
+	}
+
+}
+
+/**
+ * The content of a thought/reference
+ */
+message Content {
+}
+
+/**
+ * A label that can be applied to a thought.
+ * Meant to be a mechanism to categorize thoughts.
+ *
+ * Maybe a need for an explicit Label data-structure
+ * can be eliminated by implementing, in some form,
+ * a label as a self-referential thought with the
+ * content consisting of the "label" itself.
+ */
+message Label {
+	string label = 1;
 }
